@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html ng-app="angularmodule">
+<head>
+<title>AnguralJS Sample</title>
+
+<meta charset="UTF-8">
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+<script type="text/javascript" src="js/angular.min.js"></script>
+<script type="text/javascript" src="js/angular-resource.min.js"></script>
+<script type="text/javascript" src="js/ui-bootstrap-tpls-0.13.0.min.js"></script>
+<script type="text/javascript" src="js/javascript.js"></script>
+
+</head>
+<body>
+	<header>
+		<h1>AnguralJS Sample</h1>
+	</header>
+	<div id="contents">
+		<div id="search_area">
+			<h2>Condition</h2>
+			<div>
+				検索条件を入力してください
+			</div>
+			<form name="condition" novalidate>
+				<table id="search_table">
+					<tbody>
+						<tr>
+							<th>ユーザーID</th>
+							<td>
+								<input type="text" name="userId" class="form-control" ng-model="userId" placeholder="ユーザID　例：test1" ng-pattern="/^[a-zA-Z0-9]+$/" ng-minlength="10" ng-maxlength="10" />
+							</td>
+							<td>
+								<p class="error" ng-show="condition.userId.$error.pattern">半角英数字で入力してください</p>
+								<p class="error" ng-show="condition.userId.$error.minlength">10桁で入力してください</p>
+								<p class="error" ng-show="condition.userId.$error.maxlength">10桁で入力してください</p>
+							</td>
+						</tr>
+						<tr>
+							<th>名前</th>
+							<td><input type="text" name="userName" class="form-control" ng-model="userName" placeholder="名前　例：デーコム太郎" ng-maxlength="50" /></td>
+							<td>
+								<p class="error" ng-show="condition.userName.$error.maxlength">50文字以内で入力してください</p>
+							</td>
+						</tr>
+						<tr>
+							<th>住所</th>
+							<td><input type="text" class="form-control" placeholder="住所　例：東京都中央区東銀座1-1-1" /></td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<th>電話番号</th>
+							<td><input type="tel" class="form-control" placeholder="電話番号　例：0120XXXXXXX" /></td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<th>メールアドレス</th>
+							<td><input type="mail" class="form-control" placeholder="メールアドレス　例：test@test.com" ng-model="email" /></td>
+							<td>
+							</td>
+						</tr>
+						<tr>
+							<th>登録日</th>
+							<td>
+								<div class="input-group" ng-controller="DatePickerController">
+									<input type="text" class="form-control" ng-model="date" datepicker-popup is-open="datePickerOpen" ng-click="toggleDatePicker($event)">
+									<div class="input-group-addon" ng-click="toggleDatePicker($event)">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div id="search_button_area">
+					<input type="button" value="検索" />
+				</div>
+			</form>
+		</div>
+		<div id="result_area" ng-controller="TableController">
+			<h2>Result</h2>
+			<table id="result_table" ng-init="getUserList()">
+				<thead>
+					<tr>
+						<th id="td_no">No.</th>
+						<th id="td_id"><span ng-click="changeSorting('user.id')">ユーザーID</span></th>
+						<th id="td_name"><span ng-click="changeSorting('user.name')">名前</span></th>
+						<th id="td_address"><span ng-click="changeSorting('user.address')">住所</span></th>
+						<th id="td_phone"><span ng-click="changeSorting('user.phoneNumber')">電話番号</span></th>
+						<th id="td_detail">詳細</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="user in userList | orderBy:sort.column:sort.descending">
+						<td>{{(currentPage - 1) * itemsPerPage + $index + 1}}</td>
+						<td>{{user.user.id}}</td>
+						<td>{{user.user.name}}</td>
+						<td>{{user.user.address}}</td>
+						<td>{{user.user.phoneNumber}}</td>
+						<td ng-controller="ModalController">
+							<input type="button" value="詳細" ng-click="open(user.user.id)" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<script type="text/ng-template" id="myModalContent.html">
+				<div class="modal-header">
+					<h3 class="modal-title">詳細情報</h3>
+				</div>
+				<div class="modal-body">
+					<h4>ユーザーID</h4>
+					<p>{{userId}}</p>
+					<h4>名前</h4>
+					<p>{{name}}({{kana}})</p>
+					<h4>郵便番号</h4>
+					<p>{{zipCode}}</p>
+					<h4>住所</h4>
+					<p>{{address}}</p>
+					<h4>電話番号</h4>
+					<p>{{phoneNumber}}</p>
+					<h4>メールアドレス</h4>
+					<p>{{mailAddress}}</p>
+					<h4>備考</h4>
+					<p>{{details}}</p>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" ng-click="ok()">OK</button>
+					<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+				</div>
+			</script>
+			<div id="paging_area">
+				<pagination ng-model="currentPage" total-items="totalItems" max-size="maxSize" items-per-page="itemsPerPage" class="pagination-sm" boundary-links="true" rotate="false" ng-change="pageChanged()"></pagination>
+			</div>
+		</div>
+	</div>
+	<footer>
+	</footer>
+</body>
+</html>
